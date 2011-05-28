@@ -1,0 +1,18 @@
+
+
+                            Crash course
+     
+     # Gemfile
+     gem 'bbq', :git => 'git://github.com/drugpl/bbq.git'
+     
+     bundle install
+     rails g bbq:install -t test_unit
+     
+     # test/test_helper.rb
+     require 'bbq/unit'
+     
+
+
+
+
+

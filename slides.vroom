@@ -1,0 +1,252 @@
+# This is a sample Vroom input file. It should help you get started.
+#
+# Edit this file with your content. Then run `vroom --vroom` to start
+# the show!
+#
+# See `perldoc Vroom` for complete details.
+#
+---- config
+# Basic config options.
+title: Vroom!
+indent: 5
+height: 18
+width: 69
+skip: 0
+
+# The following options are for Gvim usage.
+vim: gvim
+# gvimrc: |
+#   set fuopt=maxhorz,maxvert
+#   set guioptions=egmLtT
+#   set guifont=Bitstream_Vera_Sans_Mono:h18
+#   set guicursor=a:blinkon0-ver25-Cursor
+#   colorscheme default
+
+---- center
+BBQ - object oriented acceptance testing
+
+(or grill your cucumber, spice your steak)
+
+Paweł Pacana
+@pawelpacana
+
+---- center
+== BBQ
+
+objected oriented acceptance tests kickstarter
+
+----
+== Rationale
+
++* no Gherkin
++* objects and methods instead of steps
++* easier code reuse
++* no factories/fixtures
+
+---- center
+== BBQ
+
+http://github.com/drugpl/bbq
+
+---- 
+== Crash course
+
++# Gemfile
+gem 'bbq', :git => 'git://github.com/drugpl/bbq.git'
+
++bundle install
++rails g bbq:install -t test_unit
+
++# test/test_helper.rb
+require 'bbq/unit'
+
++rails g bbq:test MyFeatureName
+
+----i2,ruby
+# test/acceptance/test_user.rb
+
+# How does TestUser look like
+require 'test_helper'
+
+class TestUser < Bbq::TestUser
+  # has capybara methods
+  # they run in exclusive session
+  #
+  # see!/not_see! (with asserts inside)
+  # see?/not_see? (predicates)
+  # 
+  # roles for test personas
+  #
+  # devise methods: login, logout, regsiter
+end
+
+----i2,ruby
+# Example test case
+# test/acceptance/support/my_feature_test.rb
+
+class MyCaseFeature < Bbq::TestCase
+  background do
+    # this adds callback to setup
+  end
+  background :some_helper # this also
+
+  scenario "this is my case" do
+    user = TestUser.new(self, 
+      :login          => "tester", 
+      :password       => "dupa.8", 
+      :another_option => "look_at_me"
+      # acces them from @options in instance
+    )
+    
+    # test user method
+    user.some_method
+
+    # bare capybara method here
+    user.visit("/")
+
+    # capybara has_content? 
+    # with built-in assert
+    user.see!("hello", "world", "!")
+  end
+end
+
+----i2,ruby
+# Capybara methods example
+
+class TestUser < Bbq::TestUser
+  def open_ticket(summary, description)
+    @session.visit "/support/tickets"
+    @session.click_on "Open a new ticket"
+    @session.fill_in "Summary", :with => summary
+    @session.fill_in "Description", :with => description
+    @session.click_on "Open ticket"
+  end
+end
+
+class SupportTicketsFeature < Bbq::TestCase
+  scenario "user can open support ticket" do
+    user = TestUser.new(self, 
+      :login    => "euruko", 
+      :password => "potrzebie"
+    )
+    
+    user.open_ticket("Euruko Berlin", "Euruko is awesome!")
+    # see with built-in assert
+    user.see! "Euruko is awesome!"
+  end
+end
+
+----i2,ruby
+# Roles examle
+
+class TestUser < Bbq::TestUser
+  module TicketReporter
+    def update_ticket(summary, comment)
+      show_ticket(summary)
+      # do stuff
+    end
+
+    def show_ticket(summary)
+      @session.visit "/support/tickets"
+      @session.click_on summary
+    end
+  end
+  
+  module TicketManager
+    def update_ticket(summary, comment)
+      show_ticket(summary)
+      # do other stuff
+    end
+  
+    def show_ticket(summary)
+      @session.visit "/support/admin/tickets"
+      @session.click_on summary
+    end
+  end
+end
+
+class SupportTicketsFeature < Bbq::TestCase
+  scenario "user provides more details on ticket" do
+    alice = TestUser.new(self, :login => "alice", :password => "potrzebie")
+    alice.roles(:ticket_reporter)
+
+    bob   = TestUser.new(self, :login => "alice", :password => "potrzebie")
+    bob.roles(:ticket_manager)
+
+    [alice, bob].each(&:register_and_login)
+
+    alice.open_ticket("Euruko Berlin", "Euruko is awesome!")
+    bob.update_ticket("Euruko Berlin", "Thanks! Any details?")
+    alice.update_ticket("Euruko Berlin", "Great people!")
+
+    [alice, bob].each do |actor| 
+      actor.see!("Euruko is awesome", "Thanks! Any details?", "Great people!") 
+    end
+  end
+end
+
+----i2,ruby
+# Devise example
+
+class SupportTicketsFeature < Bbq::TestCase
+  scenario "user can open support ticket" do
+    user = TestUser.new(self, 
+      :login    => "euruko", 
+      :password => "potrzebie",
+      :scope    => :user # your devise user class
+    )
+ 
+    user.register # bonus method using your Devise routes
+    user.login    # bonus method using your Devise routes
+
+    user.open_ticket("Euruko Berlin", "Euruko is awesome!")
+    user.see! "Euruko is awesome!"
+
+    user.logout   # bonus method using your Devise routes
+  end
+end
+
+----
+== Status
+
++* Rails only           # no limit to adapt elsewhere
++* Test::Unit right now # RSpec soon
++* Devise helper        # in works
+
++* we're 0.0.1          # expect 0.0.2 to be usable 
+                        # without hiccup and tested
+----
+== Future
+
++* events in tests      # look in README
+      
+----
+== EventMachine acceptance tests
+
++ * BBQ inspired
++ * testing socket server with custom JSON protocol
+    from mobile clients perspective
+
+   http://pawelpacana.github.com/em-acceptance-drug-talk
+   http://github.com/pawelpacana/eventmachine-bbq-example
+
+----
+== Contributing
+
++* get familiar with concepts from README first
++* submit ideas and use cases
+
+---- center
+== Contributing
+
+WE LOVE YOUR CONTRIBUTIONS!
+
+----
+== Questions?
+
++* see you on DRUG (Dolnośląski Ruby User Group)
+
+  2011-06-20, Wrocław PL
+  http://drug.org.pl
+  #drug.pl on freenode
+  

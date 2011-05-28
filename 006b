@@ -1,0 +1,18 @@
+
+
+                            Crash course
+     
+     # Gemfile
+     gem 'bbq', :git => 'git://github.com/drugpl/bbq.git'
+     
+
+
+
+
+
+
+
+
+
+
+
