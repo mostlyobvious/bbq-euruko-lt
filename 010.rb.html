@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>010.rb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "009.rb" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "011" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>  # Devise example
+  
+  class SupportTicketsFeature &lt; Bbq::TestCase
+    scenario &quot;user can open support ticket&quot; do
+      user = TestUser.new(self, 
+        :login    =&gt; &quot;euruko&quot;, 
+        :password =&gt; &quot;potrzebie&quot;,
+        :scope    =&gt; :user # your devise user class
+      )
+   
+      user.register # bonus method using your Devise routes
+      user.login    # bonus method using your Devise routes
+  
+      user.open_ticket(&quot;Euruko Berlin&quot;, &quot;Euruko is awesome!&quot;)
+      user.see! &quot;Euruko is awesome!&quot;
+  
+      user.logout   # bonus method using your Devise routes
+    end
+  end
+</pre>
+</body>

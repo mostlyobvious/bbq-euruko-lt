@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>007.rb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "006.rb" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "008.rb" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>  # Example test case
+  # test/acceptance/support/my_feature_test.rb
+  
+  class MyCaseFeature &lt; Bbq::TestCase
+    background do
+      # this adds callback to setup
+    end
+    background :some_helper # this also
+  
+    scenario &quot;this is my case&quot; do
+      user = TestUser.new(self, 
+        :login          =&gt; &quot;tester&quot;, 
+        :password       =&gt; &quot;dupa.8&quot;, 
+        :another_option =&gt; &quot;look_at_me&quot;
+        # acces them from @options in instance
+      )
+      
+      # test user method
+      user.some_method
+  
+      # bare capybara method here
+      user.visit(&quot;/&quot;)
+  
+      # capybara has_content? 
+      # with built-in assert
+      user.see!(&quot;hello&quot;, &quot;world&quot;, &quot;!&quot;)
+    end
+  end
+</pre>
+</body>

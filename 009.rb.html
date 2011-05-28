@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>009.rb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function navigate(e) {
+    var keynum = (window.event) // IE
+        ? e.keyCode
+        : e.which;
+    if (keynum == 8) {
+        window.location = "008.rb" + ".html";
+        return false;
+    }
+    if (keynum == 13 || keynum == 32) {
+        window.location = "010.rb" + ".html";
+        return false;
+    }
+    if (keynum == 73 || keynum == 105) {
+        window.location = "index.html";
+        return false;
+    }
+    return true;
+}
+</script>
+</head>
+<body onkeypress="return navigate(event)">
+<pre>  # Roles examle
+  
+  class TestUser &lt; Bbq::TestUser
+    module TicketReporter
+      def update_ticket(summary, comment)
+        show_ticket(summary)
+        # do stuff
+      end
+  
+      def show_ticket(summary)
+        @session.visit &quot;/support/tickets&quot;
+        @session.click_on summary
+      end
+    end
+    
+    module TicketManager
+      def update_ticket(summary, comment)
+        show_ticket(summary)
+        # do other stuff
+      end
+    
+      def show_ticket(summary)
+        @session.visit &quot;/support/admin/tickets&quot;
+        @session.click_on summary
+      end
+    end
+  end
+  
+  class SupportTicketsFeature &lt; Bbq::TestCase
+    scenario &quot;user provides more details on ticket&quot; do
+      alice = TestUser.new(self, :login =&gt; &quot;alice&quot;, :password =&gt; &quot;potrzebie&quot;)
+      alice.roles(:ticket_reporter)
+  
+      bob   = TestUser.new(self, :login =&gt; &quot;alice&quot;, :password =&gt; &quot;potrzebie&quot;)
+      bob.roles(:ticket_manager)
+  
+      [alice, bob].each(&amp;:register_and_login)
+  
+      alice.open_ticket(&quot;Euruko Berlin&quot;, &quot;Euruko is awesome!&quot;)
+      bob.update_ticket(&quot;Euruko Berlin&quot;, &quot;Thanks! Any details?&quot;)
+      alice.update_ticket(&quot;Euruko Berlin&quot;, &quot;Great people!&quot;)
+  
+      [alice, bob].each do |actor| 
+        actor.see!(&quot;Euruko is awesome&quot;, &quot;Thanks! Any details?&quot;, &quot;Great people!&quot;) 
+      end
+    end
+  end
+</pre>
+</body>
